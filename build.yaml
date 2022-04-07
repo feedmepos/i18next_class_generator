@@ -1,0 +1,12 @@
+# Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
+builders:
+  i18next_class_generator:
+    import: "package:i18next_class_generator/i18next_class_generator.dart"
+    builder_factories: ["i18NextClassGenerator"]
+    build_extensions: { ".json": [".i18next.dart"] }
+    build_to: source
+    auto_apply: root_package
+    defaults:
+      generate_for:
+        include:
+          - lib/i18next/**
