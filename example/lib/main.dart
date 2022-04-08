@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final counterL10n = CounterL10n.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(homepageL10n.)),
+      appBar: AppBar(title: Text(homepageL10n.title)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         child: Column(
