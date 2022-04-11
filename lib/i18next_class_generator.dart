@@ -31,6 +31,9 @@ class I18NextClassGenerator implements Builder {
 
     jsonDecode(await buildStep.readAsString(buildStep.inputId)) //Convert json content to dart maps.           
 
+    RegExp(r'(?<={{).*?(?=}})').allMatches(value).toList().length; //Gets amount of dynamic text in a string.
+
+    parameterName.allMatches(value).toList()[0].group(0)  //returns dynamic variable name of first element
    */
 
   @override
@@ -59,21 +62,27 @@ class I18NextClassGenerator implements Builder {
     jsonContentAsMap.forEach((key, value) async {
       if (!value.contains('{{')) {
         file.writeAsStringSync(
-            'class $key { const $key(); get value => "$value";}',
+            'class $key { const $key(); get value => "$value";}\n',
             mode: FileMode.append);
       } else {
-        // var splittedValue = value.split(' ');
-        // await for (var i in splittedValue) {
-        //   if (i.contains('{{') || i.contains('}}')) {
-        //     // i = 'I have parametersss';
-        //     i = 'im new';
-        //     print(i);
-        //   }
-        // }
+        List parameterNames =
+            RegExp(r'(?<={{).*?(?=}})').allMatches(value).toList();
+        List filteredParameters =
+            parameterNames.map((e) => e.group(0)).toSet().toList();
+        //Loops through the filtered list to only take in the first parameter, ignoring the others. eg: {{date, dd/MM/yyyy}} will only return date.
+        await Future.forEach(filteredParameters, (item) async {
+          if (item.toString().contains(',')) {
+            filteredParameters.insert(filteredParameters.indexOf(item),
+                item.toString().split(',')[0]);
+            filteredParameters.removeAt(filteredParameters.indexOf(item));
+            // print(filteredParameters.indexOf(item));
+          }
+        });
+        print(filteredParameters);
         value = value.replaceAll("{{", r"$");
         value = value.replaceAll("}}", "");
         file.writeAsStringSync(
-            'class $key { const $key(parent); get value => "$value";}',
+            'class $key { const $key(); value(${filteredParameters.join(', ')}) => "$value";}\n',
             mode: FileMode.append);
       }
     });
