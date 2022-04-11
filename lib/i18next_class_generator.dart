@@ -13,23 +13,28 @@ Builder i18NextClassGenerator(BuilderOptions options) =>
     I18NextClassGenerator();
 
 class I18NextClassGenerator implements Builder {
+  /*
+    buildStep.readAsString(buildStep.inputId)  // This returns the content of the .json
+
+   */
+
   @override
   Future build(BuildStep buildStep) async {
-    print('building');
-    final exports = buildStep.findAssets(Glob('**/*.json'));
-    print(exports);
+    final exports = buildStep.findAssets(Glob('lib/i18next/**.json'));
+    // print('TEST: ${await buildStep.readAsString(buildStep.inputId)}');
 
-    await for (var exportLibrary in exports) {
-      print(exportLibrary.uri);
-    }
+    // await for (var exportLibrary in exports) {
+    //   print('LOGGING: ${exportLibrary.uri}');
+    // }
 
     AssetId currentAsset = buildStep.inputId;
     var copy = currentAsset.changeExtension('.dart');
-    print('discover ${buildStep.inputId}');
+    // print('discover ${buildStep.inputId}');
     var filename = basenameWithoutExtension(buildStep.inputId.toString());
     // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');
     File file = File('lib/i18next/$filename.i18next.dart');
-    await file.writeAsString('abc');
+    file.writeAsStringSync(await buildStep.readAsString(buildStep.inputId),
+        mode: FileMode.append);
 
     // await buildStep.writeAsString(
     //     new AssetId(currentAsset.package, 'lib/i18next/$filename.i18next.dart'),
