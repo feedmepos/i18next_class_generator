@@ -49,7 +49,9 @@ class I18NextClassGenerator implements Builder {
     var copy = currentAsset.changeExtension('.dart');
     // print('discover ${buildStep.inputId}');
     var filename = basenameWithoutExtension(buildStep.inputId.toString());
-
+    var language = buildStep.inputId.pathSegments.reversed.elementAt(1);
+    var languageToVar = language.replaceAll(
+        '-', '_'); // Replaces "-" to "_" so it can be used as a variable name.
     // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');  //temp unused
 
     File file = File('lib/i18next/$filename.i18next.dart');
@@ -62,7 +64,7 @@ class I18NextClassGenerator implements Builder {
     jsonContentAsMap.forEach((key, value) async {
       if (!value.contains('{{')) {
         file.writeAsStringSync(
-            'class $key { const $key(); get value => "$value";}\n',
+            'class ${key}_$languageToVar { const ${key}_$languageToVar(); get value => "$value";}\n',
             mode: FileMode.append);
       } else {
         List parameterNames =
@@ -75,14 +77,12 @@ class I18NextClassGenerator implements Builder {
             filteredParameters.insert(filteredParameters.indexOf(item),
                 item.toString().split(',')[0]);
             filteredParameters.removeAt(filteredParameters.indexOf(item));
-            // print(filteredParameters.indexOf(item));
           }
         });
-        print(filteredParameters);
         value = value.replaceAll("{{", r"$");
         value = value.replaceAll("}}", "");
         file.writeAsStringSync(
-            'class $key { const $key(); value(${filteredParameters.join(', ')}) => "$value";}\n',
+            'class ${key}_$languageToVar { const ${key}_$languageToVar(); value(${filteredParameters.join(', ')}) => "$value";}\n',
             mode: FileMode.append);
       }
     });
