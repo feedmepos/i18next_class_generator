@@ -23,13 +23,13 @@ class I18NextClassGenerator implements Builder {
       print(exportLibrary.uri);
     }
 
-    // AssetId currentAsset = buildStep.inputId;
-    // var copy = currentAsset.changeExtension('.dart');
-    // print('discover ${buildStep.inputId}');
-    // var filename = basenameWithoutExtension(buildStep.inputId.toString());
-    // // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');
-    // File file = await File('lib/i18next/$filename.i18next.dart');
-    // await file.writeAsString('abc');
+    AssetId currentAsset = buildStep.inputId;
+    var copy = currentAsset.changeExtension('.dart');
+    print('discover ${buildStep.inputId}');
+    var filename = basenameWithoutExtension(buildStep.inputId.toString());
+    // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');
+    File file = File('lib/i18next/$filename.i18next.dart');
+    await file.writeAsString('abc');
 
     // await buildStep.writeAsString(
     //     new AssetId(currentAsset.package, 'lib/i18next/$filename.i18next.dart'),
@@ -38,6 +38,6 @@ class I18NextClassGenerator implements Builder {
 
   @override
   final buildExtensions = const {
-    r'$i18next$': ['.i18next.dart']
+    '.json': ['.i18next.dart']
   };
 }
