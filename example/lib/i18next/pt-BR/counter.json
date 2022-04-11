@@ -2,5 +2,9 @@
     "clickMe": "Clique em mim",
     "clicked": "Você clicou {{count}} vez!",
     "clicked_plural": "Você clicou {{count}} vezes!",
-    "resetCounter": "Resetar contador"
+    "resetCounter": "Resetar contador",
+    "nested":{
+        "key": "My nested key in BR"
+      },
+      "grouped_key": "Hola {{grouped.name}}"
 }

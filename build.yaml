@@ -1,12 +1,23 @@
 # Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
 builders:
-  i18next_class_generator:
+  i18next_json_resolver:
     import: "package:i18next_class_generator/i18next_class_generator.dart"
-    builder_factories: ["i18NextClassGenerator"]
-    build_extensions: { ".json": [".i18next.dart"] }
-    build_to: source
+    builder_factories: ["i18NextJsonResolverFactory"]
+    # build_extensions: Required. A map from input extension to the list of output extensions that may be created
+    # for that input. This must match the merged buildExtensions maps from each Builder in builder_factories.
+    build_extensions: { ".json": [".i18next.export"] }
     auto_apply: root_package
+    build_to: cache
     defaults:
       generate_for:
         include:
-          - lib/i18next/** #This affects what files the builder runs through, which also affects how many times the builder runs.
+          - lib/i18next/**/*.json #This affects what files the builder runs through, which also affects how many times the builder runs.
+
+  i18next_class_generator:
+    import: "package:i18next_class_generator/i18next_class_generator.dart"
+    builder_factories: ["i18NextClassGeneratorFactory"]
+    build_extensions:
+      "$lib$": ["i18next.dart"]
+    required_inputs: [".i18next.export"]
+    build_to: source
+    auto_apply: root_package

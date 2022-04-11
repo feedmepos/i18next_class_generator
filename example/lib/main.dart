@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18next/i18next.dart';
 import 'package:intl/intl.dart';
 
+// import 'i18next/localizations.i18next.dart';
 import 'localizations.dart';
 
 void main() => runApp(MyApp());

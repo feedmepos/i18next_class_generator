@@ -3,14 +3,34 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // ignore: import_of_legacy_library_into_null_safe
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:build/build.dart';
-import 'package:path/path.dart' show basenameWithoutExtension;
+import 'package:dart_style/dart_style.dart';
+import 'package:path/path.dart' show basenameWithoutExtension, dirname;
 import 'package:glob/glob.dart';
+import 'package:code_builder/code_builder.dart';
 
-Builder i18NextClassGenerator(BuilderOptions options) =>
+Builder i18NextJsonResolverFactory(BuilderOptions options) => JsonResolver();
+
+class JsonResolver extends Builder {
+  static const suffix = '.i18next.export';
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    await buildStep.writeAsString(buildStep.inputId.changeExtension(suffix),
+        buildStep.readAsString(buildStep.inputId));
+  }
+
+  @override
+  Map<String, List<String>> get buildExtensions => {
+        '.dart': [suffix]
+      };
+}
+
+Builder i18NextClassGeneratorFactory(BuilderOptions options) =>
     I18NextClassGenerator();
 
 class I18NextClassGenerator implements Builder {
@@ -38,63 +58,120 @@ class I18NextClassGenerator implements Builder {
 
   @override
   Future build(BuildStep buildStep) async {
-    final exports = buildStep.findAssets(Glob('lib/i18next/**'));
-    // print('TEST: ${await exports.toList()}');
+    final allJsonFiles =
+        await buildStep.findAssets(Glob('lib/i18next/**.json')).toList();
 
-    // await for (var exportLibrary in exports) {
-    //   print('LOGGING: ${exportLibrary.uri}');
-    // }
+    Map<String, Map<String, Map<String, dynamic>>> languageMapping = {};
 
-    AssetId currentAsset = buildStep.inputId;
-    var copy = currentAsset.changeExtension('.dart');
-    // print('discover ${buildStep.inputId}');
-    var filename = basenameWithoutExtension(buildStep.inputId.toString());
-    var language = buildStep.inputId.pathSegments.reversed.elementAt(1);
-    var languageToVar = language.replaceAll(
-        '-', '_'); // Replaces "-" to "_" so it can be used as a variable name.
-    // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');  //temp unused
+    for (var jsonFile in allJsonFiles) {
+      var language = basenameWithoutExtension(dirname(jsonFile.path));
+      var namespace = basenameWithoutExtension(jsonFile.path);
+      var json = jsonDecode(await buildStep.readAsString(jsonFile));
+      languageMapping[language] ??= {};
+      languageMapping[language]?[namespace] = json;
+    }
+    JsonEncoder encoder = const JsonEncoder.withIndent('  ');
+    // print(encoder.convert(languageMapping));
 
-    File file = File('lib/i18next/$filename.i18next.dart');
-    // file.writeAsStringSync(await buildStep.readAsString(buildStep.inputId),
-    //     mode: FileMode
-    //         .append); // wont create multiple files if file with same name already exists.
+    // validation
+    for (var ns in languageMapping.entries) {}
 
-    Map jsonContentAsMap =
-        jsonDecode(await buildStep.readAsString(buildStep.inputId));
-    jsonContentAsMap.forEach((key, value) async {
-      if (!value.contains('{{')) {
-        file.writeAsStringSync(
-            'class ${key}_$languageToVar { const ${key}_$languageToVar(); get value => "$value";}\n',
-            mode: FileMode.append);
-      } else {
-        List parameterNames =
-            RegExp(r'(?<={{).*?(?=}})').allMatches(value).toList();
-        List filteredParameters =
-            parameterNames.map((e) => e.group(0)).toSet().toList();
-        //Loops through the filtered list to only take in the first parameter, ignoring the others. eg: {{date, dd/MM/yyyy}} will only return date.
-        await Future.forEach(filteredParameters, (item) async {
-          if (item.toString().contains(',')) {
-            filteredParameters.insert(filteredParameters.indexOf(item),
-                item.toString().split(',')[0]);
-            filteredParameters.removeAt(filteredParameters.indexOf(item));
-          }
-        });
-        value = value.replaceAll("{{", r"$");
-        value = value.replaceAll("}}", "");
-        file.writeAsStringSync(
-            'class ${key}_$languageToVar { const ${key}_$languageToVar(); value(${filteredParameters.join(', ')}) => "$value";}\n',
-            mode: FileMode.append);
+    // generate class file
+    final library = LibraryBuilder();
+    library.directives.add(Directive.import('package:i18next/i18next.dart'));
+    library.directives.add(Directive.import('package:flutter/widgets.dart'));
+    languageMapping.entries.first.value.entries.forEach((entry) {
+      var namespace = entry.key;
+      var translations = entry.value;
+      var namespaceClass = ClassBuilder();
+      namespaceClass
+        ..name = namespace
+        ..fields.add(Field((fb) => fb
+          ..name = 'i18next'
+          ..modifier = FieldModifier.final$
+          ..type = Reference('I18Next')))
+        ..constructors.add(
+            Constructor((cb) => cb.requiredParameters.add(Parameter((p) => p
+              ..name = 'i18next'
+              ..toThis = true))));
+
+      for (var translationPair in translations.entries) {
+        namespaceClass.methods.add(Method((mb) => mb
+          ..type = MethodType.getter
+          ..name = translationPair.key
+          ..body = Code(
+              'return i18next.t(\'${namespace}:${translationPair.key}\');')));
       }
+      library.body.add(namespaceClass.build());
     });
-    // print(jsonDecode(await buildStep.readAsString(buildStep.inputId)));
 
-    // await buildStep.writeAsString(
-    //     new AssetId(currentAsset.package, 'lib/i18next/$filename.i18next.dart'),
-    //     ''); //temp unused
+    final emitter = DartEmitter();
+    final finalFile = DartFormatter()
+        .format('${library.build().accept(emitter)}'); //dart file content
+    print(finalFile);
+    File file = File('lib/i18next/localizations.i18next.dart');
+    file.writeAsStringSync(finalFile);
+
+    // AssetId currentAsset = buildStep.inputId;
+    // var copy = currentAsset.changeExtension('.dart');
+    // // print('discover ${buildStep.inputId}');
+    // var filename = basenameWithoutExtension(buildStep.inputId.toString());
+    // var language = buildStep.inputId.pathSegments.reversed.elementAt(1);
+    // var languageToVar = language.replaceAll(
+    //     '-', '_'); // Replaces "-" to "_" so it can be used as a variable name.
+    // // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');  //temp unused
+
+    // File file = File('lib/i18next/$filename.i18next.dart');
+    // // file.writeAsStringSync(await buildStep.readAsString(buildStep.inputId),
+    // //     mode: FileMode
+    // //         .append); // wont create multiple files if file with same name already exists.
+
+    // Map jsonContentAsMap =
+    //     jsonDecode(await buildStep.readAsString(buildStep.inputId));
+
+    // final library = LibraryBuilder();
+    // jsonContentAsMap.forEach((key, value) async {
+    //   library.body.add(Class((b) => b..name = '${key}_$languageToVar'));
+    //   // if (!value.contains('{{')) {
+    //   //   file.writeAsStringSync(
+    //   //       'class ${key}_$languageToVar { const ${key}_$languageToVar(); get value => "$value";}\n',
+    //   //       mode: FileMode.append);
+    //   // } else {
+    //   //   List parameterNames =
+    //   //       RegExp(r'(?<={{).*?(?=}})').allMatches(value).toList();
+    //   //   List filteredParameters =
+    //   //       parameterNames.map((e) => e.group(0)).toSet().toList();
+    //   //   //Loops through the filtered list to only take in the first parameter, ignoring the others. eg: {{date, dd/MM/yyyy}} will only return date.
+    //   //   await Future.forEach(filteredParameters, (item) async {
+    //   //     if (item.toString().contains(',')) {
+    //   //       filteredParameters.insert(filteredParameters.indexOf(item),
+    //   //           item.toString().split(',')[0]);
+    //   //       filteredParameters.removeAt(filteredParameters.indexOf(item));
+    //   //     }
+    //   //   });
+    //   //   value = value.replaceAll("{{", r"$");
+    //   //   value = value.replaceAll("}}", "");
+    //   //   file.writeAsStringSync(
+    //   //       'class ${key}_$languageToVar { const ${key}_$languageToVar(); value(${filteredParameters.join(', ')}) => "$value";}\n',
+    //   //       mode: FileMode.append);
+    //   // }
+    // });
+
+    // final emitter = DartEmitter();
+    // final finalFile =
+    //     DartFormatter().format('${library.build().accept(emitter)}');
+    // print(finalFile);
+    // file.writeAsStringSync(finalFile);
+
+    // // print(jsonDecode(await buildStep.readAsString(buildStep.inputId)));
+
+    // // await buildStep.writeAsString(
+    // //     new AssetId(currentAsset.package, 'lib/i18next/$filename.i18next.dart'),
+    // //     ''); //temp unused
   }
 
   @override
   final buildExtensions = const {
-    '.json': ['.i18next.dart']
+    r'$lib$': ['i18next.dart']
   };
 }

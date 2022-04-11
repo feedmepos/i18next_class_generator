@@ -1,6 +1,15 @@
 {
-    "clickMe": "Click me",
-    "clicked": "You clicked {{count}} time!",
-    "clicked_plural": "You clicked {{count}} {{count}} {{count}} {{count}} {{count}} times!",
-    "resetCounter": "Reset Counter"
+    "base": "Base",
+    "interpolation": "interpolation {{object}}",
+    "interpolationNested": "interpolation {{object.key1}} {{object.key2}}",
+    "formatting": "formatting {{object}}, uppercase",
+    "nesting": "nesting $t(counter:base)",
+    "item": "plural {{count}} item",
+    "item_plural": "plural {{count}} items",
+    "plural": "plural {{count}} {{object}}",
+    "plural_plural": "plural {{count}} {{object}}s",
+    "nested": {
+        "nestedKey1": "Nested key 1"
+    },
+    "nestingNested": "nesting nested $t(counter:nested.nestedKey1)"
 }
