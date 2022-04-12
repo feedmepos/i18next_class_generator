@@ -1,10 +1,15 @@
 {
-    "clickMe": "Clique em mim",
-    "clicked": "Você clicou {{count}} vez!",
-    "clicked_plural": "Você clicou {{count}} vezes!",
-    "resetCounter": "Resetar contador",
-    "nested":{
-        "key": "My nested key in BR"
-      },
-      "grouped_key": "Hola {{grouped.name}}"
+  "base": "Base in BR",
+  "interpolation": "interpolation {{object}} in BR",
+  "interpolationNested": "interpolation {{object.key1}} {{object.key2}} in BR", 
+  "formatting": "formatting {{object}}, uppercase in BR",
+  "nesting": "nesting $t(counter:base) in BR",
+  "item": "plural {{count}} item in BR",
+  "item_plural": "plural {{count}} items in BR",
+  "plural": "plural {{count}} {{object}} in BR",
+  "plural_plural": "plural {{count}} {{object}}s in BR",
+  "nested": {
+      "nestedKey1": "Nested key 1 in BR"
+  },
+  "nestingNested": "nesting nested $t(counter:nested.nestedKey1) {{surprise_object}} in BR"
 }

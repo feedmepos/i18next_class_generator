@@ -4,8 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18next/i18next.dart';
 import 'package:intl/intl.dart';
 
-// import 'i18next/localizations.i18next.dart';
-import 'localizations.dart';
+import 'i18next/localizations.i18next.dart';
+// import 'localizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -104,11 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final homepageL10n = HomePageL10n.of(context);
-    final counterL10n = CounterL10n.of(context);
+    final homepageL10n = counter.of(context);
+    final counterL10n = homepage.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(homepageL10n.title)),
+      appBar: AppBar(title: Text(homepageL10n.base)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         child: Column(
@@ -123,11 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const Divider(),
             Text(
-              homepageL10n.hello(name: 'Name', world: 'Flutter'),
+              homepageL10n.nested,
               style: theme.textTheme.headline6,
             ),
             Text(
-              homepageL10n.today(DateTime.now()),
+              homepageL10n.interpolation("weirdddd"),
               style: theme.textTheme.subtitle2,
             ),
             CupertinoSegmentedControl<String>(
@@ -140,22 +140,23 @@ class _MyHomePageState extends State<MyHomePage> {
               groupValue: _gender,
               onValueChanged: updateGender,
             ),
-            Text(homepageL10n.gendered(_gender)),
+            Text(homepageL10n
+                .interpolationNested({"key1": "doge", "key2": "doge2"})),
             const Divider(),
             Text(
-              counterL10n.clicked(_counter),
+              homepageL10n.nesting,
               style: theme.textTheme.headline4,
             ),
             TextButton(
               onPressed: resetCounter,
-              child: Text(counterL10n.resetCounter),
+              child: Text(homepageL10n.plural_plural(69, 'doge')),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: incrementCounter,
-        tooltip: counterL10n.clickMe,
+        tooltip: homepageL10n.interpolation("stuff"),
         child: const Icon(Icons.add),
       ),
     );

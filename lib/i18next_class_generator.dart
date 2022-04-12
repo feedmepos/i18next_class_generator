@@ -91,7 +91,7 @@ class I18NextClassGenerator implements Builder {
           ..name =
               'i18next' // adds a variable with name of 'i18nxt' eg: final I18Next i18next;
           ..modifier = FieldModifier.final$ //Gives it the type of final
-          ..type = Reference('I18Next')))
+          ..type = const Reference('I18Next')))
         ..constructors.add(
             Constructor((cb) => cb.requiredParameters.add(Parameter((p) => p
               ..name = 'i18next' //Affects class constructor
@@ -119,12 +119,16 @@ class I18NextClassGenerator implements Builder {
                   translatedMatches.indexOf(i), i.toString().split('.')[0]);
               translatedMatches.removeAt(translatedMatches.indexOf(i));
               i = i.substring(0, i.indexOf('.'));
-              i18nVariables[i] = i;
+              var keyToString = i;
+              keyToString = '"$i"'; // Convert key value to be wrapped by ""
+              i18nVariables[keyToString] = i;
               // Refilters the list
               translatedMatches = translatedMatches.toSet().toList();
             } else if (i != 'count') {
+              var keyToString = i;
+              keyToString = '"$i"'; // Convert key value to be wrapped by ""
               containsObject = true;
-              i18nVariables[i] = i;
+              i18nVariables[keyToString] = i;
               // Refilters the list
               translatedMatches = translatedMatches.toSet().toList();
             } else {

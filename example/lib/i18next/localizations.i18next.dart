@@ -6,6 +6,8 @@ class counter {
 
   final I18Next i18next;
 
+  static counter of(BuildContext context) => counter(I18Next.of(context)!);
+
   get base {
     return i18next.t('counter:base');
   }
@@ -13,21 +15,21 @@ class counter {
   interpolation(object) {
     return i18next.t(
       'counter:interpolation',
-      variables: {object: object},
+      variables: {"object": object},
     );
   }
 
   interpolationNested(object) {
     return i18next.t(
       'counter:interpolationNested',
-      variables: {object: object},
+      variables: {"object": object},
     );
   }
 
   formatting(object) {
     return i18next.t(
       'counter:formatting',
-      variables: {object: object},
+      variables: {"object": object},
     );
   }
 
@@ -45,12 +47,12 @@ class counter {
 
   plural(count, object) {
     return i18next.t('counter:plural',
-        variables: {object: object}, count: count);
+        variables: {"object": object}, count: count);
   }
 
   plural_plural(count, object) {
     return i18next.t('counter:plural_plural',
-        variables: {object: object}, count: count);
+        variables: {"object": object}, count: count);
   }
 
   get nested {
@@ -60,7 +62,7 @@ class counter {
   nestingNested(surprise_object) {
     return i18next.t(
       'counter:nestingNested',
-      variables: {surprise_object: surprise_object},
+      variables: {"surprise_object": surprise_object},
     );
   }
 }
@@ -69,6 +71,8 @@ class homepage {
   homepage(this.i18next);
 
   final I18Next i18next;
+
+  static homepage of(BuildContext context) => homepage(I18Next.of(context)!);
 
   get genderMessage {
     return i18next.t('homepage:genderMessage');
@@ -85,14 +89,14 @@ class homepage {
   today(date) {
     return i18next.t(
       'homepage:today',
-      variables: {date: date},
+      variables: {"date": date},
     );
   }
 
   helloMessage(name, world) {
     return i18next.t(
       'homepage:helloMessage',
-      variables: {name: name, world: world},
+      variables: {"name": name, "world": world},
     );
   }
 
