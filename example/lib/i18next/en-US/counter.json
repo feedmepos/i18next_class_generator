@@ -4,6 +4,7 @@
     "interpolationNested": "interpolation {{object.key1, uppercase}} {{object.key2}}", 
     "formatting": "formatting {{word, uppercase}}",
     "nesting": "nesting $t(counter:base)",
+    "nestingOtherModule": "nesting $t(homepage:title)",
     "item": "plural {{count}} item",
     "item_plural": "plural {{count}} items",
     "plural": "plural {{count}} {{object}}",

@@ -31,6 +31,10 @@ class JsonResolver extends Builder {
       };
 }
 
+String capitalize(String text) {
+  return "${text.substring(0, 1).toUpperCase()}${text.substring(1, text.length)}";
+}
+
 Builder i18NextClassGeneratorFactory(BuilderOptions options) =>
     I18NextClassGenerator();
 
@@ -78,16 +82,47 @@ class I18NextClassGenerator implements Builder {
     for (var ns in languageMapping.entries) {}
 
     // generate class file
+    var jsonList = languageMapping.entries.first.value.entries;
     final library = LibraryBuilder();
+    var topLevelClass = ClassBuilder();
     library.directives.add(Directive.import('package:i18next/i18next.dart'));
     library.directives.add(Directive.import('package:flutter/widgets.dart'));
+
+    topLevelClass
+      ..name = 'I18n'
+      ..fields.add(Field((fb) => fb
+        ..name =
+            'i18next' // adds a variable with name of 'i18nxt' eg: final I18Next i18next;
+        ..modifier = FieldModifier.final$ //Gives it the type of final
+        ..type = const Reference('I18Next')))
+      ..constructors
+          .add(Constructor((cb) => cb.requiredParameters.add(Parameter((p) => p
+            ..name = 'i18next' //Affects class constructor
+            ..toThis = true))));
+
+    topLevelClass.methods.add(Method((mb) => mb
+      ..static = true
+      ..requiredParameters.add(Parameter((p) => p..name = 'context'))
+      ..name = 'I18n of'
+      ..body = Code('return I18n(I18Next.of(context)!);')));
+
+    jsonList.forEach((element) {
+      topLevelClass.methods.add(Method((mb) => mb
+        ..type = MethodType.getter
+        ..name = element.key
+        ..body = Code('return ${capitalize(element.key)}(\i18next\);')));
+    });
+
+    library.body.add(topLevelClass.build());
+
     // Loops through the files in en-US
     languageMapping.entries.first.value.entries.forEach((entry) {
       var namespace = entry.key; //json file name
+      var className = capitalize(namespace); //json file name
       var translations = entry.value; //json content
       var namespaceClass = ClassBuilder();
       namespaceClass
-        ..name = namespace
+        ..name = className
         ..fields.add(Field((fb) => fb
           ..name =
               'i18next' // adds a variable with name of 'i18nxt' eg: final I18Next i18next;
@@ -101,8 +136,8 @@ class I18NextClassGenerator implements Builder {
       namespaceClass.methods.add(Method((mb) => mb
         ..static = true
         ..requiredParameters.add(Parameter((p) => p..name = 'context'))
-        ..name = 'of'
-        ..body = Code('return $namespace(I18Next.of(context)!);')));
+        ..name = '$className of'
+        ..body = Code('return $className(I18Next.of(context)!);')));
 
       for (var translationPair in translations.entries) {
         // Handles strings with interpolation
@@ -148,7 +183,6 @@ class I18NextClassGenerator implements Builder {
             }
             // Everything else that isn't "count" goes in here.
             else if (i != 'count') {
-              print('cache');
               var keyToString = i;
               keyToString = '"$i"'; // Convert key value to be wrapped by ""
               containsObject = true;

@@ -2,7 +2,7 @@
   "base": "Base in BR",
   "interpolation": "interpolation {{object}} in BR",
   "interpolationNested": "interpolation {{object.key1}} {{object.key2}} in BR", 
-  "formatting": "formatting {{object}}, uppercase in BR",
+  "formatting": "formatting {{object, uppercase}} in BR",
   "nesting": "nesting $t(counter:base) in BR",
   "item": "plural {{count}} item in BR",
   "item_plural": "plural {{count}} items in BR",

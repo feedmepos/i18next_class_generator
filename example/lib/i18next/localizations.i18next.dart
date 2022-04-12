@@ -1,13 +1,31 @@
 import 'package:i18next/i18next.dart';
 import 'package:flutter/widgets.dart';
 
-class counter {
-  counter(this.i18next);
+class I18n {
+  I18n(this.i18next);
 
   final I18Next i18next;
 
-  static of(context) {
-    return counter(I18Next.of(context)!);
+  static I18n of(context) {
+    return I18n(I18Next.of(context)!);
+  }
+
+  get counter {
+    return Counter(i18next);
+  }
+
+  get homepage {
+    return Homepage(i18next);
+  }
+}
+
+class Counter {
+  Counter(this.i18next);
+
+  final I18Next i18next;
+
+  static Counter of(context) {
+    return Counter(I18Next.of(context)!);
   }
 
   get base {
@@ -37,6 +55,10 @@ class counter {
 
   get nesting {
     return i18next.t('counter:nesting');
+  }
+
+  get nestingOtherModule {
+    return i18next.t('counter:nestingOtherModule');
   }
 
   item(count) {
@@ -69,13 +91,13 @@ class counter {
   }
 }
 
-class homepage {
-  homepage(this.i18next);
+class Homepage {
+  Homepage(this.i18next);
 
   final I18Next i18next;
 
-  static of(context) {
-    return homepage(I18Next.of(context)!);
+  static Homepage of(context) {
+    return Homepage(I18Next.of(context)!);
   }
 
   get genderMessage {

@@ -5,6 +5,7 @@ import 'package:i18next/i18next.dart';
 import 'package:intl/intl.dart';
 
 import 'i18next/localizations.i18next.dart';
+import 'localizations.dart';
 // import 'localizations.dart';
 
 void main() => runApp(MyApp());
@@ -83,6 +84,17 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+class Test extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final i18next = I18Next.of(context)!;
+    final counter = Counter(i18next);
+    return Column(
+      children: [Text(counter.base)],
+    );
+  }
+}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
     Key? key,
@@ -98,17 +110,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   String _gender = '';
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final homepageL10n = counter.of(context);
-    final counterL10n = homepage.of(context);
+    final i18n = I18n.of(context);
+    final homepageL10n = Counter.of(context);
+    final counterL10n = Homepage.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(homepageL10n.formatting('make me big'))),
+      appBar: AppBar(
+          title: Text(homepageL10n.interpolationNested(
+              {"key1": 'chiki chiki', "key2": "boom boom"}))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         child: Column(
@@ -147,24 +161,26 @@ class _MyHomePageState extends State<MyHomePage> {
               homepageL10n.nesting,
               style: theme.textTheme.headline4,
             ),
-            TextButton(
-              onPressed: resetCounter,
-              child: Text(homepageL10n.plural_plural(69, 'doge')),
-            ),
+            Text(homepageL10n.base),
+            Text(homepageL10n.interpolation("test 1")),
+            Text(homepageL10n.interpolationNested({
+              "key1": "should uppercase",
+              "key2": "object key 2",
+            })),
+            Text(homepageL10n.nesting),
+            Text(homepageL10n.nestingOtherModule),
+            Text(homepageL10n.item(0)),
+            Text(homepageL10n.item(1)),
+            Text(homepageL10n.item(2)),
+            Text(homepageL10n.plural(0, "plural")),
+            Text(homepageL10n.plural(1, "plural")),
+            Text(homepageL10n.plural(2, "plural")),
+            Text(homepageL10n.nestingNested("surprise_object")),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: incrementCounter,
-        tooltip: homepageL10n.interpolation("stuff"),
-        child: const Icon(Icons.add),
-      ),
     );
   }
-
-  void incrementCounter() => setState(() => _counter++);
-
-  void resetCounter() => setState(() => _counter = 0);
 
   void updateGender(String gender) => setState(() => _gender = gender);
 }
