@@ -80,27 +80,81 @@ class I18NextClassGenerator implements Builder {
     final library = LibraryBuilder();
     library.directives.add(Directive.import('package:i18next/i18next.dart'));
     library.directives.add(Directive.import('package:flutter/widgets.dart'));
+    // Loops through the files in en-US
     languageMapping.entries.first.value.entries.forEach((entry) {
-      var namespace = entry.key;
-      var translations = entry.value;
+      var namespace = entry.key; //json file name
+      var translations = entry.value; //json content
       var namespaceClass = ClassBuilder();
       namespaceClass
         ..name = namespace
         ..fields.add(Field((fb) => fb
-          ..name = 'i18next'
-          ..modifier = FieldModifier.final$
+          ..name =
+              'i18next' // adds a variable with name of 'i18nxt' eg: final I18Next i18next;
+          ..modifier = FieldModifier.final$ //Gives it the type of final
           ..type = Reference('I18Next')))
         ..constructors.add(
             Constructor((cb) => cb.requiredParameters.add(Parameter((p) => p
-              ..name = 'i18next'
+              ..name = 'i18next' //Affects class constructor
               ..toThis = true))));
 
       for (var translationPair in translations.entries) {
-        namespaceClass.methods.add(Method((mb) => mb
-          ..type = MethodType.getter
-          ..name = translationPair.key
-          ..body = Code(
-              'return i18next.t(\'${namespace}:${translationPair.key}\');')));
+        // Handles strings with interpolation
+        if (translationPair.value.runtimeType == String &&
+            RegExp(r'(?<={{).*?(?=}})')
+                .allMatches(translationPair.value)
+                .isNotEmpty) {
+          var matches = RegExp(r'(?<={{).*?(?=}})')
+              .allMatches(translationPair.value)
+              .toList();
+          var translatedMatches =
+              matches.map((e) => e.group(0)).toSet().toList();
+          Map i18nVariables = {};
+          var parameters = {};
+          var containsObject; //Checks whether interpolation contains "."
+          for (var i in translatedMatches) {
+            if (i!.contains('.')) {
+              containsObject = true;
+              // Removes everything after the '.' if i is an object
+              translatedMatches.insert(
+                  translatedMatches.indexOf(i), i.toString().split('.')[0]);
+              translatedMatches.removeAt(translatedMatches.indexOf(i));
+              i = i.substring(0, i.indexOf('.'));
+              i18nVariables[i] = i;
+              // Refilters the list
+              translatedMatches = translatedMatches.toSet().toList();
+            } else if (i != 'count') {
+              containsObject = true;
+              i18nVariables[i] = i;
+              // Refilters the list
+              translatedMatches = translatedMatches.toSet().toList();
+            } else {
+              parameters[i] = i;
+            }
+          }
+          namespaceClass.methods.add(Method((mb) => mb
+            ..requiredParameters
+                .add(Parameter((p) => p..name = translatedMatches.join(",")))
+            ..name = translationPair.key
+            ..body = Code(
+                'return i18next.t(\'$namespace:${translationPair.key}\'${containsObject == true ? ", variables: $i18nVariables" : ""}${parameters.toString().isNotEmpty ? ', ' + parameters.toString().substring(1, parameters.toString().length - 1) : ""});')));
+        }
+        //Handles nested types
+        else if (translationPair.value.runtimeType != String) {
+          var clonedPair = translationPair.value.toString();
+          clonedPair = clonedPair.replaceAll("{", "");
+          clonedPair = clonedPair.replaceAll("}", "");
+          namespaceClass.methods.add(Method((mb) => mb
+            ..type = MethodType.getter
+            ..name = translationPair.key
+            ..body = Code(
+                'return i18next.t(\'${namespace}:${translationPair.key}.${clonedPair.split(':')[0]}\');')));
+        } else {
+          namespaceClass.methods.add(Method((mb) => mb
+            ..type = MethodType.getter
+            ..name = translationPair.key
+            ..body = Code(
+                'return i18next.t(\'${namespace}:${translationPair.key}\');')));
+        }
       }
       library.body.add(namespaceClass.build());
     });
@@ -108,7 +162,6 @@ class I18NextClassGenerator implements Builder {
     final emitter = DartEmitter();
     final finalFile = DartFormatter()
         .format('${library.build().accept(emitter)}'); //dart file content
-    print(finalFile);
     File file = File('lib/i18next/localizations.i18next.dart');
     file.writeAsStringSync(finalFile);
 

@@ -6,28 +6,62 @@ class counter {
 
   final I18Next i18next;
 
-  get clickMe {
-    return i18next.t('counter:clickMe');
+  get base {
+    return i18next.t('counter:base');
   }
 
-  get clicked {
-    return i18next.t('counter:clicked');
+  interpolation(object) {
+    return i18next.t(
+      'counter:interpolation',
+      variables: {object: object},
+    );
   }
 
-  get clicked_plural {
-    return i18next.t('counter:clicked_plural');
+  interpolationNested(object) {
+    return i18next.t(
+      'counter:interpolationNested',
+      variables: {object: object},
+    );
   }
 
-  get resetCounter {
-    return i18next.t('counter:resetCounter');
+  formatting(object) {
+    return i18next.t(
+      'counter:formatting',
+      variables: {object: object},
+    );
+  }
+
+  get nesting {
+    return i18next.t('counter:nesting');
+  }
+
+  item(count) {
+    return i18next.t('counter:item', count: count);
+  }
+
+  item_plural(count) {
+    return i18next.t('counter:item_plural', count: count);
+  }
+
+  plural(count, object) {
+    return i18next.t('counter:plural',
+        variables: {object: object}, count: count);
+  }
+
+  plural_plural(count, object) {
+    return i18next.t('counter:plural_plural',
+        variables: {object: object}, count: count);
   }
 
   get nested {
-    return i18next.t('counter:nested');
+    return i18next.t('counter:nested.nestedKey1');
   }
 
-  get grouped_key {
-    return i18next.t('counter:grouped_key');
+  nestingNested(surprise_object) {
+    return i18next.t(
+      'counter:nestingNested',
+      variables: {surprise_object: surprise_object},
+    );
   }
 }
 
@@ -48,12 +82,18 @@ class homepage {
     return i18next.t('homepage:genderMessage_male');
   }
 
-  get today {
-    return i18next.t('homepage:today');
+  today(date) {
+    return i18next.t(
+      'homepage:today',
+      variables: {date: date},
+    );
   }
 
-  get helloMessage {
-    return i18next.t('homepage:helloMessage');
+  helloMessage(name, world) {
+    return i18next.t(
+      'homepage:helloMessage',
+      variables: {name: name, world: world},
+    );
   }
 
   get title {

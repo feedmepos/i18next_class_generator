@@ -2,7 +2,7 @@
     "genderMessage": "They",
     "genderMessage_female": "Her",
     "genderMessage_male": "Him",
-    "today": "Today is {{date, dd/MM/yyyy}}",
-    "helloMessage": "Hello {{name}} in the {{world, uppercase}} world",
+    "today": "Today is {{date}}",
+    "helloMessage": "Hello {{name}} in the {{world}} world",
     "title": "Hello en_US"
 }

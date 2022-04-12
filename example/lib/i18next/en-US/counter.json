@@ -1,7 +1,7 @@
 {
     "base": "Base",
     "interpolation": "interpolation {{object}}",
-    "interpolationNested": "interpolation {{object.key1}} {{object.key2}}",
+    "interpolationNested": "interpolation {{object.key1}} {{object.key2}}", 
     "formatting": "formatting {{object}}, uppercase",
     "nesting": "nesting $t(counter:base)",
     "item": "plural {{count}} item",
@@ -11,5 +11,5 @@
     "nested": {
         "nestedKey1": "Nested key 1"
     },
-    "nestingNested": "nesting nested $t(counter:nested.nestedKey1)"
+    "nestingNested": "nesting nested $t(counter:nested.nestedKey1) {{surprise_object}}"
 }
