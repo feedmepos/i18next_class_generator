@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:build/build.dart';
+import 'package:built_collection/src/list.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' show basenameWithoutExtension, dirname;
 import 'package:glob/glob.dart';
@@ -97,6 +98,12 @@ class I18NextClassGenerator implements Builder {
               ..name = 'i18next' //Affects class constructor
               ..toThis = true))));
 
+      namespaceClass.methods.add(Method((mb) => mb
+        ..static = true
+        ..requiredParameters.add(Parameter((p) => p..name = 'context'))
+        ..name = 'of'
+        ..body = Code('return $namespace(I18Next.of(context)!);')));
+
       for (var translationPair in translations.entries) {
         // Handles strings with interpolation
         if (translationPair.value.runtimeType == String &&
@@ -110,7 +117,7 @@ class I18NextClassGenerator implements Builder {
               matches.map((e) => e.group(0)).toSet().toList();
           Map i18nVariables = {};
           var parameters = {};
-          var containsObject; //Checks whether interpolation contains "."
+          dynamic containsObject; //Checks whether interpolation contains "."
           for (var i in translatedMatches) {
             if (i!.contains('.')) {
               containsObject = true;
@@ -124,7 +131,24 @@ class I18NextClassGenerator implements Builder {
               i18nVariables[keyToString] = i;
               // Refilters the list
               translatedMatches = translatedMatches.toSet().toList();
-            } else if (i != 'count') {
+            }
+            // If contains second value eg: uppercase
+            else if (i.contains(',')) {
+              containsObject = true;
+              // Removes everything after the '.' if i is an object
+              translatedMatches.insert(
+                  translatedMatches.indexOf(i), i.toString().split(',')[0]);
+              translatedMatches.removeAt(translatedMatches.indexOf(i));
+              i = i.substring(0, i.indexOf(','));
+              var keyToString = i;
+              keyToString = '"$i"'; // Convert key value to be wrapped by ""
+              i18nVariables[keyToString] = i;
+              // Refilters the list
+              translatedMatches = translatedMatches.toSet().toList();
+            }
+            // Everything else that isn't "count" goes in here.
+            else if (i != 'count') {
+              print('cache');
               var keyToString = i;
               keyToString = '"$i"'; // Convert key value to be wrapped by ""
               containsObject = true;

@@ -6,7 +6,9 @@ class counter {
 
   final I18Next i18next;
 
-  static counter of(BuildContext context) => counter(I18Next.of(context)!);
+  static of(context) {
+    return counter(I18Next.of(context)!);
+  }
 
   get base {
     return i18next.t('counter:base');
@@ -26,10 +28,10 @@ class counter {
     );
   }
 
-  formatting(object) {
+  formatting(word) {
     return i18next.t(
       'counter:formatting',
-      variables: {"object": object},
+      variables: {"word": word},
     );
   }
 
@@ -72,7 +74,9 @@ class homepage {
 
   final I18Next i18next;
 
-  static homepage of(BuildContext context) => homepage(I18Next.of(context)!);
+  static of(context) {
+    return homepage(I18Next.of(context)!);
+  }
 
   get genderMessage {
     return i18next.t('homepage:genderMessage');

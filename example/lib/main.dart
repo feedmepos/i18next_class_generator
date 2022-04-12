@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final counterL10n = homepage.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(homepageL10n.base)),
+      appBar: AppBar(title: Text(homepageL10n.formatting('make me big'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         child: Column(

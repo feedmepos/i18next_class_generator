@@ -1,8 +1,8 @@
 {
     "base": "Base",
     "interpolation": "interpolation {{object}}",
-    "interpolationNested": "interpolation {{object.key1}} {{object.key2}}", 
-    "formatting": "formatting {{object}}, uppercase",
+    "interpolationNested": "interpolation {{object.key1, uppercase}} {{object.key2}}", 
+    "formatting": "formatting {{word, uppercase}}",
     "nesting": "nesting $t(counter:base)",
     "item": "plural {{count}} item",
     "item_plural": "plural {{count}} items",
