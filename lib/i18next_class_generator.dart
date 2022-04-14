@@ -31,8 +31,10 @@ class JsonResolver extends Builder {
       };
 }
 
-String capitalize(String text) {
-  return "${text.substring(0, 1).toUpperCase()}${text.substring(1, text.length)}";
+String _generateClassName(String text, {bool isPrivate = false}) {
+  final className =
+      "${text.substring(0, 1).toUpperCase()}${text.substring(1, text.length)}";
+  return isPrivate ? "_$className" : className;
 }
 
 Builder i18NextClassGeneratorFactory(BuilderOptions options) =>
@@ -86,7 +88,6 @@ class I18NextClassGenerator implements Builder {
     final library = LibraryBuilder();
     var topLevelClass = ClassBuilder();
     library.directives.add(Directive.import('package:i18next/i18next.dart'));
-    library.directives.add(Directive.import('package:flutter/widgets.dart'));
 
     topLevelClass
       ..name = 'I18n'
@@ -107,10 +108,12 @@ class I18NextClassGenerator implements Builder {
       ..body = Code('return I18n(I18Next.of(context)!);')));
 
     jsonList.forEach((element) {
+      final className = _generateClassName(element.key, isPrivate: true);
       topLevelClass.methods.add(Method((mb) => mb
+        ..returns = Reference(className)
         ..type = MethodType.getter
         ..name = element.key
-        ..body = Code('return ${capitalize(element.key)}(\i18next\);')));
+        ..body = Code('return $className(\i18next\);')));
     });
 
     library.body.add(topLevelClass.build());
@@ -118,7 +121,8 @@ class I18NextClassGenerator implements Builder {
     // Loops through the files in en-US
     languageMapping.entries.first.value.entries.forEach((entry) {
       var namespace = entry.key; //json file name
-      var className = capitalize(namespace); //json file name
+      var className =
+          _generateClassName(namespace, isPrivate: true); //json file name
       var translations = entry.value; //json content
       var namespaceClass = ClassBuilder();
       namespaceClass
@@ -132,12 +136,6 @@ class I18NextClassGenerator implements Builder {
             Constructor((cb) => cb.requiredParameters.add(Parameter((p) => p
               ..name = 'i18next' //Affects class constructor
               ..toThis = true))));
-
-      namespaceClass.methods.add(Method((mb) => mb
-        ..static = true
-        ..requiredParameters.add(Parameter((p) => p..name = 'context'))
-        ..name = '$className of'
-        ..body = Code('return $className(I18Next.of(context)!);')));
 
       for (var translationPair in translations.entries) {
         // Handles strings with interpolation
@@ -194,6 +192,7 @@ class I18NextClassGenerator implements Builder {
             }
           }
           namespaceClass.methods.add(Method((mb) => mb
+            ..returns = Reference("String")
             ..requiredParameters
                 .add(Parameter((p) => p..name = translatedMatches.join(",")))
             ..name = translationPair.key
@@ -206,12 +205,14 @@ class I18NextClassGenerator implements Builder {
           clonedPair = clonedPair.replaceAll("{", "");
           clonedPair = clonedPair.replaceAll("}", "");
           namespaceClass.methods.add(Method((mb) => mb
+            ..returns = Reference("String")
             ..type = MethodType.getter
             ..name = translationPair.key
             ..body = Code(
                 'return i18next.t(\'${namespace}:${translationPair.key}.${clonedPair.split(':')[0]}\');')));
         } else {
           namespaceClass.methods.add(Method((mb) => mb
+            ..returns = Reference("String")
             ..type = MethodType.getter
             ..name = translationPair.key
             ..body = Code(

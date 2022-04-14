@@ -71,6 +71,8 @@ class _MyAppState extends State<MyApp> {
 
   static String formatter(Object value, String? format, Locale? locale) {
     switch (format) {
+      case 'test_formatter':
+        return value.toString().toUpperCase();
       case 'uppercase':
         return value.toString().toUpperCase();
       case 'lowercase':

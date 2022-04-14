@@ -1,0 +1,13 @@
+{
+  "adjustIngredient": "$t(common:adjust) $t(inventory:ingredient, lowercase)",
+  "convertIngredient": "$t(common:convert) $t(inventory:ingredient, lowercase)",
+  "ingredient": "Ingredient",
+  "inventory": "Inventory",
+  "inventoryPurchase": "Purchase",
+  "returnStock": "Return $t(inventory:stock, lowercase)",
+  "searchIngredient": "$t(common:search) $t(inventory:ingredient, lowercase)",
+  "sharedStock": "Shared $t(inventory:stock, lowercase)",
+  "stock": "Stock",
+  "updateAdjustmentRemark": "$t(common:update) $t(common:remark, lowercase)",
+  "updateStock": "$t(common:update) $t(inventory:stock, lowercase)"
+}

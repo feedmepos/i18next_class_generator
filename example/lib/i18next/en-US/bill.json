@@ -1,0 +1,14 @@
+{
+  "bill": "Bill",
+  "bill_plural": "Bills",
+  "billDiscount": "$t(bill:bill) $t(common:discount, lowercase)",
+  "billNo": "$t(bill:bill) $t(common:numberShort, lowercase)",
+  "billOpenAt": "$t(bill:bill) open at",
+  "billRemark": "$t(bill:bill) $t(common:remark, lowercase)",
+  "billRounding": "$t(bill:bill) $t(common:rounding, lowercase)",
+  "billRoundingDescription": "The total $t(common:amount) of a $t(bill:bill, lowercase) will automatically rounded to the nearest $t(common:amount).",
+  "itemWithIdNotFound": "Item with id {{itemId}} not found",
+  "otherBills": "$t(common:other) $t(bill:bill_plural, lowercase)",
+  "searchBill": "$t(common:search) $t(bill:bill, lowercase)",
+  "selectBill": "$t(common:select) $t(bill:bill, lowercase)"
+}

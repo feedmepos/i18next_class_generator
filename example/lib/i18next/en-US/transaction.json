@@ -1,0 +1,15 @@
+{
+  "memberPurchase": "Member purchase",
+  "noRefundRecord": "$t(common:no) $t(transaction:refund, lowercase) $t(common:record, lowercase)",
+  "openCounterToRefund": "$t(device:openCounter) to $t(transaction:refund, lowercase)",
+  "reasonToRefund": "$t(common:reason) to $t(transaction:refund, lowercase)",
+  "refund": "Refund",
+  "refundAmount": "$t(transaction:refund) $t(common:amount, lowercase)",
+  "refundBy": "$t(transaction:refund) by",
+  "refundObject": "$t(transaction:refund) {{object, lowercase}}",
+  "refundRecord": "$t(transaction:refund) $t(common:record, lowercase)",
+  "refundType": "$t(transaction:refund) type",
+  "selectRefundType": "$t(common:select) $t(transaction:refundType, lowercase)",
+  "searchTransaction": "$t(common:search) $t(transaction:transaction, lowercase)",
+  "transaction": "Transaction"
+}

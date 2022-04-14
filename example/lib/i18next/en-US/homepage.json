@@ -1,8 +1,0 @@
-{
-    "genderMessage": "They",
-    "genderMessage_female": "Her",
-    "genderMessage_male": "Him",
-    "today": "Today is {{date}}",
-    "helloMessage": "Hello {{name}} in the {{world}} world",
-    "title": "Hello en_US"
-}

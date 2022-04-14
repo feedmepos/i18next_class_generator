@@ -1,0 +1,6 @@
+{
+  "averagePreparationTime": "Average preparing time",
+  "averagePreparationTimeDescription": "$t(common:driver) will be informed to pick up order in last {{min}} $t(common:minute)",
+  "averagePreparationTimeDescription_plural": "$t(common:driver) will be informed to pick up order in last {{min}} $t(common:minute_plural)",
+  "kitchen": "Kitchen"
+}

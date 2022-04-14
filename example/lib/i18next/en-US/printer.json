@@ -1,0 +1,16 @@
+{
+  "addPrinter": "$t(common:add) $t(printer:printer)",
+  "orderTemplate": "Order",
+  "print": "Print",
+  "printer": "Printer",
+  "printerConnectFail": "Fail to connect to printer",
+  "printerName": "$t(printer:printer) $t(common:name, lowercase)",
+  "printReceipt": "$t{printer:print} $t(common:receipt, lowercase)",
+  "printReceiptAfterPayment": "$t(printer:printReceipt) after $t(payment:payment, lowercase)",
+  "printRecordAfterDrawer": "$t(printer:print) record(s) after open $t(device:drawer, lowercase)",
+  "printReport": "${printer:print} report",
+  "pulseDrawer": "Pulse $t(device:drawer, lowercase)",
+  "removePrinter": "$t(common:remove) $t(printer:printer, lowercase)",
+  "stickerTemplate": "Sticker",
+  "tapToPrint": "Tap to print again."
+}

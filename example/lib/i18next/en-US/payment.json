@@ -1,0 +1,15 @@
+{
+  "addPaymentMethod": "$t(common:add) $t(payment:paymentMethod, lowercase)",
+  "addCustomPaymentMethod": "$t(common:add) $t(payment:customPaymentMethod, lowercase)",
+  "activatePaymentMethod": "$t(common:activate) $t(payment:paymentMethod, lowercase)",
+  "cash": "Cash",
+  "customPaymentMethod": "$t(common:custom) $t(payment:paymentMethod, lowercase)",
+  "ePayment": "E-payment",
+  "noCustomPaymentMethod": "$t(common:common) $t(payment:customPaymentMethod, lowercase)",
+  "noPaymentMethod": "$t(common:common) $t(payment:paymentMethod, lowercase)",
+  "payment": "Payment",
+  "paymentMethod": "$t(payment:payment) method",
+  "presetPaymentMethod": "$t(common:preset) $t(payment:paymentMethod, lowercase)",
+  "selectPaymentMethod": "$t(common:select) $t(payment:paymentMethod, lowercase)",
+  "updateCustomPaymentMethod": "$t(common:update) $t(payment:customPaymentMethod, lowercase)"
+}
