@@ -8,7 +8,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:build/build.dart';
-import 'package:built_collection/src/list.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' show basenameWithoutExtension, dirname;
 import 'package:glob/glob.dart';
@@ -85,7 +84,6 @@ class I18NextClassGenerator implements Builder {
       languageMapping[language]?[namespace] = json;
     }
     JsonEncoder encoder = const JsonEncoder.withIndent('  ');
-    // print(encoder.convert(languageMapping));
 
     // validation
     for (var ns in languageMapping.entries) {}
@@ -132,7 +130,6 @@ class I18NextClassGenerator implements Builder {
       List<String> path = const [],
     }) {
       var _class = ClassBuilder();
-      // var className = _generateClassName(namespace, isPrivate: true);
       List<ClassBuilder> classes = [];
 
       // generate constructor and required I18Next variable
@@ -265,63 +262,6 @@ class I18NextClassGenerator implements Builder {
         .format('${library.build().accept(emitter)}'); //dart file content
     File file = File('lib/i18next/localizations.i18next.dart');
     file.writeAsStringSync(finalFile);
-
-    // AssetId currentAsset = buildStep.inputId;
-    // var copy = currentAsset.changeExtension('.dart');
-    // // print('discover ${buildStep.inputId}');
-    // var filename = basenameWithoutExtension(buildStep.inputId.toString());
-    // var language = buildStep.inputId.pathSegments.reversed.elementAt(1);
-    // var languageToVar = language.replaceAll(
-    //     '-', '_'); // Replaces "-" to "_" so it can be used as a variable name.
-    // // await buildStep.writeAsString(copy, 'lib/i18next/$filename.i18next.dart');  //temp unused
-
-    // File file = File('lib/i18next/$filename.i18next.dart');
-    // // file.writeAsStringSync(await buildStep.readAsString(buildStep.inputId),
-    // //     mode: FileMode
-    // //         .append); // wont create multiple files if file with same name already exists.
-
-    // Map jsonContentAsMap =
-    //     jsonDecode(await buildStep.readAsString(buildStep.inputId));
-
-    // final library = LibraryBuilder();
-    // jsonContentAsMap.forEach((key, value) async {
-    //   library.body.add(Class((b) => b..name = '${key}_$languageToVar'));
-    //   // if (!value.contains('{{')) {
-    //   //   file.writeAsStringSync(
-    //   //       'class ${key}_$languageToVar { const ${key}_$languageToVar(); get value => "$value";}\n',
-    //   //       mode: FileMode.append);
-    //   // } else {
-    //   //   List parameterNames =
-    //   //       RegExp(r'(?<={{).*?(?=}})').allMatches(value).toList();
-    //   //   List filteredParameters =
-    //   //       parameterNames.map((e) => e.group(0)).toSet().toList();
-    //   //   //Loops through the filtered list to only take in the first parameter, ignoring the others. eg: {{date, dd/MM/yyyy}} will only return date.
-    //   //   await Future.forEach(filteredParameters, (item) async {
-    //   //     if (item.toString().contains(',')) {
-    //   //       filteredParameters.insert(filteredParameters.indexOf(item),
-    //   //           item.toString().split(',')[0]);
-    //   //       filteredParameters.removeAt(filteredParameters.indexOf(item));
-    //   //     }
-    //   //   });
-    //   //   value = value.replaceAll("{{", r"$");
-    //   //   value = value.replaceAll("}}", "");
-    //   //   file.writeAsStringSync(
-    //   //       'class ${key}_$languageToVar { const ${key}_$languageToVar(); value(${filteredParameters.join(', ')}) => "$value";}\n',
-    //   //       mode: FileMode.append);
-    //   // }
-    // });
-
-    // final emitter = DartEmitter();
-    // final finalFile =
-    //     DartFormatter().format('${library.build().accept(emitter)}');
-    // print(finalFile);
-    // file.writeAsStringSync(finalFile);
-
-    // // print(jsonDecode(await buildStep.readAsString(buildStep.inputId)));
-
-    // // await buildStep.writeAsString(
-    // //     new AssetId(currentAsset.package, 'lib/i18next/$filename.i18next.dart'),
-    // //     ''); //temp unused
   }
 
   @override

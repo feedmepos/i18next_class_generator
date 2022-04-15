@@ -5,16 +5,14 @@ import 'package:i18next/i18next.dart';
 import 'package:intl/intl.dart';
 
 import 'i18next/localizations.i18next.dart';
-import 'localizations.dart';
-// import 'localizations.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
   final List<Locale> locales = const [
     Locale('en', 'US'),
     Locale('pt', 'BR'),
-    // TODO: add multi plural language(s)
   ];
 
   @override
@@ -46,11 +44,8 @@ class _MyAppState extends State<MyApp> {
         I18NextLocalizationDelegate(
           locales: widget.locales,
           dataSource: AssetBundleLocalizationDataSource(
-            // This is the path for the files declared in pubspec which should
-            // contain all of your localizations
             bundlePath: 'i18next',
           ),
-          // extra formatting options can be added here
           options: const I18NextOptions(formatter: formatter),
         ),
       ],
@@ -107,8 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = I18n.of(context);
-    // final i18n = Counter.of(context);
-    // final counterL10n = Homepage.of(context);
 
     return Scaffold(
       appBar: AppBar(
