@@ -86,17 +86,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class Test extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final i18next = I18Next.of(context)!;
-    final counter = Counter(i18next);
-    return Column(
-      children: [Text(counter.base)],
-    );
-  }
-}
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
     Key? key,
@@ -118,12 +107,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = I18n.of(context);
-    final homepageL10n = Counter.of(context);
-    final counterL10n = Homepage.of(context);
+    // final i18n = Counter.of(context);
+    // final counterL10n = Homepage.of(context);
 
     return Scaffold(
       appBar: AppBar(
-          title: Text(homepageL10n.interpolationNested(
+          title: Text(i18n.example.interpolationNested(
               {"key1": 'chiki chiki', "key2": "boom boom"}))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -139,11 +128,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const Divider(),
             Text(
-              homepageL10n.nested,
+              i18n.example.base,
               style: theme.textTheme.headline6,
             ),
             Text(
-              homepageL10n.interpolation("weirdddd"),
+              i18n.example.interpolation("weirdddd"),
               style: theme.textTheme.subtitle2,
             ),
             CupertinoSegmentedControl<String>(
@@ -156,28 +145,27 @@ class _MyHomePageState extends State<MyHomePage> {
               groupValue: _gender,
               onValueChanged: updateGender,
             ),
-            Text(homepageL10n
+            Text(i18n.example
                 .interpolationNested({"key1": "doge", "key2": "doge2"})),
             const Divider(),
             Text(
-              homepageL10n.nesting,
+              i18n.example.nesting,
               style: theme.textTheme.headline4,
             ),
-            Text(homepageL10n.base),
-            Text(homepageL10n.interpolation("test 1")),
-            Text(homepageL10n.interpolationNested({
+            Text(i18n.example.base),
+            Text(i18n.example.interpolation("test 1")),
+            Text(i18n.example.interpolationNested({
               "key1": "should uppercase",
               "key2": "object key 2",
             })),
-            Text(homepageL10n.nesting),
-            Text(homepageL10n.nestingOtherModule),
-            Text(homepageL10n.item(0)),
-            Text(homepageL10n.item(1)),
-            Text(homepageL10n.item(2)),
-            Text(homepageL10n.plural(0, "plural")),
-            Text(homepageL10n.plural(1, "plural")),
-            Text(homepageL10n.plural(2, "plural")),
-            Text(homepageL10n.nestingNested("surprise_object")),
+            Text(i18n.example.nesting),
+            Text(i18n.example.item(0)),
+            Text(i18n.example.item(1)),
+            Text(i18n.example.item(2)),
+            Text(i18n.example.plural(0, "plural")),
+            Text(i18n.example.plural(1, "plural")),
+            Text(i18n.example.plural(2, "plural")),
+            Text(i18n.example.nestingNested("surprise_object")),
           ],
         ),
       ),

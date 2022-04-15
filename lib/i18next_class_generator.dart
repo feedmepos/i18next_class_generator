@@ -31,10 +31,17 @@ class JsonResolver extends Builder {
       };
 }
 
+String _capitalize(String text) {
+  return "${text.substring(0, 1).toUpperCase()}${text.substring(1, text.length)}";
+}
+
 String _generateClassName(String text, {bool isPrivate = false}) {
-  final className =
-      "${text.substring(0, 1).toUpperCase()}${text.substring(1, text.length)}";
+  final className = _capitalize(text);
   return isPrivate ? "_$className" : className;
+}
+
+String _generatePath(List<String> path, String key) {
+  return [...path, key].join(".");
 }
 
 Builder i18NextClassGeneratorFactory(BuilderOptions options) =>
@@ -118,15 +125,19 @@ class I18NextClassGenerator implements Builder {
 
     library.body.add(topLevelClass.build());
 
-    // Loops through the files in en-US
-    languageMapping.entries.first.value.entries.forEach((entry) {
-      var namespace = entry.key; //json file name
-      var className =
-          _generateClassName(namespace, isPrivate: true); //json file name
-      var translations = entry.value; //json content
-      var namespaceClass = ClassBuilder();
-      namespaceClass
-        ..name = className
+    List<ClassBuilder> _generateClasses({
+      required String namespace,
+      required String classname,
+      required Map<String, dynamic> json,
+      List<String> path = const [],
+    }) {
+      var _class = ClassBuilder();
+      // var className = _generateClassName(namespace, isPrivate: true);
+      List<ClassBuilder> classes = [];
+
+      // generate constructor and required I18Next variable
+      _class
+        ..name = classname
         ..fields.add(Field((fb) => fb
           ..name =
               'i18next' // adds a variable with name of 'i18nxt' eg: final I18Next i18next;
@@ -137,14 +148,17 @@ class I18NextClassGenerator implements Builder {
               ..name = 'i18next' //Affects class constructor
               ..toThis = true))));
 
-      for (var translationPair in translations.entries) {
+      // ListBuilder<Method> methods = ListBuilder();
+      for (var translationPair in json.entries) {
+        final _translationKey = translationPair.key;
+        final _translationValue = translationPair.value;
         // Handles strings with interpolation
-        if (translationPair.value.runtimeType == String &&
+        if (_translationValue.runtimeType == String &&
             RegExp(r'(?<={{).*?(?=}})')
-                .allMatches(translationPair.value)
+                .allMatches(_translationValue)
                 .isNotEmpty) {
           var matches = RegExp(r'(?<={{).*?(?=}})')
-              .allMatches(translationPair.value)
+              .allMatches(_translationValue)
               .toList();
           var translatedMatches =
               matches.map((e) => e.group(0)).toSet().toList();
@@ -191,35 +205,59 @@ class I18NextClassGenerator implements Builder {
               parameters[i] = i;
             }
           }
-          namespaceClass.methods.add(Method((mb) => mb
-            ..returns = Reference("String")
+          _class.methods.add(Method((mb) => mb
+            ..returns = const Reference("String")
             ..requiredParameters
                 .add(Parameter((p) => p..name = translatedMatches.join(",")))
-            ..name = translationPair.key
+            ..name = _translationKey
             ..body = Code(
-                'return i18next.t(\'$namespace:${translationPair.key}\'${containsObject == true ? ", variables: $i18nVariables" : ""}${parameters.toString().isNotEmpty ? ', ' + parameters.toString().substring(1, parameters.toString().length - 1) : ""});')));
+                'return i18next.t(\'$namespace:${_generatePath(path, _translationKey)}\'${containsObject == true ? ", variables: $i18nVariables" : ""}${parameters.toString().isNotEmpty ? ', ' + parameters.toString().substring(1, parameters.toString().length - 1) : ""});')));
         }
         //Handles nested types
-        else if (translationPair.value.runtimeType != String) {
-          var clonedPair = translationPair.value.toString();
-          clonedPair = clonedPair.replaceAll("{", "");
-          clonedPair = clonedPair.replaceAll("}", "");
-          namespaceClass.methods.add(Method((mb) => mb
-            ..returns = Reference("String")
-            ..type = MethodType.getter
-            ..name = translationPair.key
-            ..body = Code(
-                'return i18next.t(\'${namespace}:${translationPair.key}.${clonedPair.split(':')[0]}\');')));
+        else if (_translationValue.runtimeType != String) {
+          final _classname = "$classname${_capitalize(_translationKey)}";
+          final subClass = _generateClasses(
+            namespace: namespace,
+            classname: _classname,
+            json: _translationValue,
+            path: [...path, _translationKey],
+          );
+          classes.addAll(subClass);
+          final resp = _generateClassName(_classname);
+
+          _class.methods.add(
+            Method(
+              (mb) => mb
+                ..returns = Reference(resp)
+                ..type = MethodType.getter
+                ..name = _translationKey
+                ..body = Code("return $resp(i18next);"),
+            ),
+          );
         } else {
-          namespaceClass.methods.add(Method((mb) => mb
-            ..returns = Reference("String")
+          _class.methods.add(Method((mb) => mb
+            ..returns = const Reference("String")
             ..type = MethodType.getter
-            ..name = translationPair.key
+            ..name = _translationKey
             ..body = Code(
-                'return i18next.t(\'${namespace}:${translationPair.key}\');')));
+                'return i18next.t(\'$namespace:${_generatePath(path, _translationKey)}\');')));
         }
       }
-      library.body.add(namespaceClass.build());
+      classes.add(_class);
+      return classes;
+    }
+
+    // Loops through the files in en-US
+    languageMapping.entries.first.value.entries.forEach((entry) {
+      var namespace = entry.key; //json file name
+      final generatedClasses = _generateClasses(
+        namespace: namespace,
+        classname: _generateClassName(namespace, isPrivate: true),
+        json: entry.value,
+      );
+      for (var generatedClass in generatedClasses) {
+        library.body.add(generatedClass.build());
+      }
     });
 
     final emitter = DartEmitter();

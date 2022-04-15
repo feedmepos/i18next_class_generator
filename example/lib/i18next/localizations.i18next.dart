@@ -17,12 +17,20 @@ class I18n {
     return _Common(i18next);
   }
 
+  _Counter get counter {
+    return _Counter(i18next);
+  }
+
   _Device get device {
     return _Device(i18next);
   }
 
   _Display get display {
     return _Display(i18next);
+  }
+
+  _Example get example {
+    return _Example(i18next);
   }
 
   _Inventory get inventory {
@@ -1245,6 +1253,88 @@ class _Common {
   }
 }
 
+class _CounterNested {
+  _CounterNested(this.i18next);
+
+  final I18Next i18next;
+
+  String get nestedKey1 {
+    return i18next.t('counter:nested.nestedKey1');
+  }
+
+  String get nestedKey2 {
+    return i18next.t('counter:nested.nestedKey2');
+  }
+}
+
+class _Counter {
+  _Counter(this.i18next);
+
+  final I18Next i18next;
+
+  String get base {
+    return i18next.t('counter:base');
+  }
+
+  String interpolation(object) {
+    return i18next.t(
+      'counter:interpolation',
+      variables: {"object": object},
+    );
+  }
+
+  String interpolationNested(object) {
+    return i18next.t(
+      'counter:interpolationNested',
+      variables: {"object": object},
+    );
+  }
+
+  String formatting(word) {
+    return i18next.t(
+      'counter:formatting',
+      variables: {"word": word},
+    );
+  }
+
+  String get nesting {
+    return i18next.t('counter:nesting');
+  }
+
+  String get nestingOtherModule {
+    return i18next.t('counter:nestingOtherModule');
+  }
+
+  String item(count) {
+    return i18next.t('counter:item', count: count);
+  }
+
+  String item_plural(count) {
+    return i18next.t('counter:item_plural', count: count);
+  }
+
+  String plural(count, object) {
+    return i18next.t('counter:plural',
+        variables: {"object": object}, count: count);
+  }
+
+  String plural_plural(count, object) {
+    return i18next.t('counter:plural_plural',
+        variables: {"object": object}, count: count);
+  }
+
+  _CounterNested get nested {
+    return _CounterNested(i18next);
+  }
+
+  String nestingNested(surprise_object) {
+    return i18next.t(
+      'counter:nestingNested',
+      variables: {"surprise_object": surprise_object},
+    );
+  }
+}
+
 class _Device {
   _Device(this.i18next);
 
@@ -1460,6 +1550,84 @@ class _Display {
 
   String get mainDisplay {
     return i18next.t('display:mainDisplay');
+  }
+}
+
+class _ExampleNested {
+  _ExampleNested(this.i18next);
+
+  final I18Next i18next;
+
+  String get nestedKey1 {
+    return i18next.t('example:nested.nestedKey1');
+  }
+
+  String get nestedKey2 {
+    return i18next.t('example:nested.nestedKey2');
+  }
+}
+
+class _Example {
+  _Example(this.i18next);
+
+  final I18Next i18next;
+
+  String get base {
+    return i18next.t('example:base');
+  }
+
+  String interpolation(object) {
+    return i18next.t(
+      'example:interpolation',
+      variables: {"object": object},
+    );
+  }
+
+  String interpolationNested(object) {
+    return i18next.t(
+      'example:interpolationNested',
+      variables: {"object": object},
+    );
+  }
+
+  String formatting(word) {
+    return i18next.t(
+      'example:formatting',
+      variables: {"word": word},
+    );
+  }
+
+  String get nesting {
+    return i18next.t('example:nesting');
+  }
+
+  String item(count) {
+    return i18next.t('example:item', count: count);
+  }
+
+  String item_plural(count) {
+    return i18next.t('example:item_plural', count: count);
+  }
+
+  String plural(count, object) {
+    return i18next.t('example:plural',
+        variables: {"object": object}, count: count);
+  }
+
+  String plural_plural(count, object) {
+    return i18next.t('example:plural_plural',
+        variables: {"object": object}, count: count);
+  }
+
+  _ExampleNested get nested {
+    return _ExampleNested(i18next);
+  }
+
+  String nestingNested(surprise_object) {
+    return i18next.t(
+      'example:nestingNested',
+      variables: {"surprise_object": surprise_object},
+    );
   }
 }
 
@@ -2088,6 +2256,63 @@ class _Payment {
   }
 }
 
+class _PrinterPaperConfigDoubleNestedThirdNested {
+  _PrinterPaperConfigDoubleNestedThirdNested(this.i18next);
+
+  final I18Next i18next;
+
+  String get c {
+    return i18next.t('printer:paperConfig.doubleNested.thirdNested.c');
+  }
+}
+
+class _PrinterPaperConfigDoubleNested {
+  _PrinterPaperConfigDoubleNested(this.i18next);
+
+  final I18Next i18next;
+
+  _PrinterPaperConfigDoubleNestedThirdNested get thirdNested {
+    return _PrinterPaperConfigDoubleNestedThirdNested(i18next);
+  }
+
+  String get a {
+    return i18next.t('printer:paperConfig.doubleNested.a');
+  }
+
+  String b(count) {
+    return i18next.t('printer:paperConfig.doubleNested.b', count: count);
+  }
+}
+
+class _PrinterPaperConfig {
+  _PrinterPaperConfig(this.i18next);
+
+  final I18Next i18next;
+
+  String width(value) {
+    return i18next.t(
+      'printer:paperConfig.width',
+      variables: {"value": value},
+    );
+  }
+
+  String get height {
+    return i18next.t('printer:paperConfig.height');
+  }
+
+  String get xReference {
+    return i18next.t('printer:paperConfig.xReference');
+  }
+
+  String get yReference {
+    return i18next.t('printer:paperConfig.yReference');
+  }
+
+  _PrinterPaperConfigDoubleNested get doubleNested {
+    return _PrinterPaperConfigDoubleNested(i18next);
+  }
+}
+
 class _Printer {
   _Printer(this.i18next);
 
@@ -2103,6 +2328,10 @@ class _Printer {
 
   String get print {
     return i18next.t('printer:print');
+  }
+
+  _PrinterPaperConfig get paperConfig {
+    return _PrinterPaperConfig(i18next);
   }
 
   String get printer {
