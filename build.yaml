@@ -21,3 +21,7 @@ builders:
     required_inputs: [".i18next.export"]
     build_to: source
     auto_apply: root_package
+    defaults:
+      options:
+        glob_pattern: lib/i18next/**/*.json
+        out_file: lib/i18next/localizations.i18next.dart

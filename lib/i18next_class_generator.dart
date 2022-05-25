@@ -8,10 +8,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:build/build.dart';
-import 'package:dart_style/dart_style.dart';
-import 'package:path/path.dart' show basenameWithoutExtension, dirname;
-import 'package:glob/glob.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
+import 'package:glob/glob.dart';
+import 'package:path/path.dart' show basenameWithoutExtension, dirname;
 
 Builder i18NextJsonResolverFactory(BuilderOptions options) => JsonResolver();
 
@@ -44,9 +44,23 @@ String _generatePath(List<String> path, String key) {
 }
 
 Builder i18NextClassGeneratorFactory(BuilderOptions options) =>
-    I18NextClassGenerator();
+    I18NextClassGenerator(
+        globPattern: options.config['glob_pattern'],
+        outFile: options.config['out_file']);
+
+_safeVarialbeName(String key) {
+  key = key.replaceAll(RegExp("[- \\/\(\)]"), "_");
+  if (['return', 'void'].any((element) => element == key)) {
+    key = 'z${key}';
+  }
+  return key;
+}
 
 class I18NextClassGenerator implements Builder {
+  String globPattern;
+  String outFile;
+
+  I18NextClassGenerator({required this.globPattern, required this.outFile});
   /*
     ===Useful snippets===
 
@@ -61,6 +75,13 @@ class I18NextClassGenerator implements Builder {
     file.writeAsStringSync(
         r'class Messages { const Messages(); ButtonMessages get button => ButtonExampleMessages(this); UsersMessages get users => UsersExampleMessages(this);}',
         mode: FileMode.append); //example of appending dart code into new dart file 
+  I18NextClassGenerator({
+    this.globPattern,
+    this..append),
+    this.FileMode.append),
+  );
+    required this.FileMode.append),
+  });
 
     jsonDecode(await buildStep.readAsString(buildStep.inputId)) //Convert json content to dart maps.           
 
@@ -71,8 +92,7 @@ class I18NextClassGenerator implements Builder {
 
   @override
   Future build(BuildStep buildStep) async {
-    final allJsonFiles =
-        await buildStep.findAssets(Glob('lib/i18next/**.json')).toList();
+    final allJsonFiles = await buildStep.findAssets(Glob(globPattern)).toList();
 
     Map<String, Map<String, Map<String, dynamic>>> languageMapping = {};
 
@@ -117,7 +137,7 @@ class I18NextClassGenerator implements Builder {
       topLevelClass.methods.add(Method((mb) => mb
         ..returns = Reference(className)
         ..type = MethodType.getter
-        ..name = element.key
+        ..name = _safeVarialbeName(element.key)
         ..body = Code('return $className(\i18next\);')));
     });
 
@@ -227,7 +247,7 @@ class I18NextClassGenerator implements Builder {
               (mb) => mb
                 ..returns = Reference(resp)
                 ..type = MethodType.getter
-                ..name = _translationKey
+                ..name = _safeVarialbeName(_translationKey)
                 ..body = Code("return $resp(i18next);"),
             ),
           );
@@ -235,7 +255,7 @@ class I18NextClassGenerator implements Builder {
           _class.methods.add(Method((mb) => mb
             ..returns = const Reference("String")
             ..type = MethodType.getter
-            ..name = _translationKey
+            ..name = _safeVarialbeName(_translationKey)
             ..body = Code(
                 'return i18next.t(\'$namespace:${_generatePath(path, _translationKey)}\');')));
         }
@@ -260,7 +280,7 @@ class I18NextClassGenerator implements Builder {
     final emitter = DartEmitter();
     final finalFile = DartFormatter()
         .format('${library.build().accept(emitter)}'); //dart file content
-    File file = File('lib/i18next/localizations.i18next.dart');
+    File file = File(outFile);
     file.writeAsStringSync(finalFile);
   }
 

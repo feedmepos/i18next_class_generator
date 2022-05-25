@@ -19,11 +19,11 @@ class _ExampleNested {
 
   final I18Next i18next;
 
-  String get nestedKey1 {
+  String get nestedkey1 {
     return i18next.t('example:nested.nestedKey1');
   }
 
-  String get nestedKey2 {
+  String get nestedkey2 {
     return i18next.t('example:nested.nestedKey2');
   }
 }

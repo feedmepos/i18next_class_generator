@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      i18next_class_generator|i18next_json_resolver:
+        generate_for:
+          include:
+            - lib/i18n/**/*.json
+      i18next_class_generator|i18next_class_generator:
+        options:
+          glob_pattern: lib/i18n/**/*.json
+          out_file: lib/i18n/localizations.i18next.dart
