@@ -1,3 +1,6 @@
+## 0.0.3
+* fix dart environment
+
 ## 0.0.2
 * allow configure glob pattern for the json and output file
 
