@@ -5,7 +5,6 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
@@ -280,12 +279,12 @@ class I18NextClassGenerator implements Builder {
     final emitter = DartEmitter();
     final finalFile = DartFormatter()
         .format('${library.build().accept(emitter)}'); //dart file content
-    File file = File(outFile);
-    file.writeAsStringSync(finalFile);
+    final outputId = AssetId(buildStep.inputId.package, outFile);
+    await buildStep.writeAsString(outputId, finalFile);
   }
 
   @override
   final buildExtensions = const {
-    r'$lib$': ['i18next.dart']
+    r'$lib$': ['i18next/localizations.i18next.dart']
   };
 }

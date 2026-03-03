@@ -17,7 +17,7 @@ builders:
     import: "package:i18next_class_generator/i18next_class_generator.dart"
     builder_factories: ["i18NextClassGeneratorFactory"]
     build_extensions:
-      "$lib$": ["i18next.dart"]
+      "$lib$": ["i18next/localizations.i18next.dart"]
     required_inputs: [".i18next.export"]
     build_to: source
     auto_apply: root_package
