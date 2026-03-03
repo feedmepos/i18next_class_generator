@@ -285,6 +285,6 @@ class I18NextClassGenerator implements Builder {
 
   @override
   final buildExtensions = const {
-    r'$lib$': ['i18next/localizations.i18next.dart']
+    r'$lib$': ['i18next.dart']
   };
 }
