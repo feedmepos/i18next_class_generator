@@ -92,7 +92,17 @@ class I18NextClassGenerator implements Builder {
 
   @override
   Future build(BuildStep buildStep) async {
-    final allJsonFiles = await buildStep.findAssets(Glob(globPattern)).toList();
+    // Sorted by path: `findAssets` yields the glob matches in an unspecified
+    // order. build_runner backs it either with a `dart:io` directory crawl
+    // (raw `readdir` order, not alphabetical) or with the persisted asset
+    // graph's node insertion order, so the same inputs produce a different
+    // order depending on whether the build ran cold or incrementally. That
+    // order flows straight into `languageMapping` (a LinkedHashMap) and from
+    // there into the order of the emitted classes, which made the generated
+    // file unreproducible. Sorting also pins which locale drives generation
+    // below, since that is `languageMapping.entries.first`.
+    final allJsonFiles = (await buildStep.findAssets(Glob(globPattern)).toList())
+      ..sort((a, b) => a.path.compareTo(b.path));
 
     Map<String, Map<String, Map<String, dynamic>>> languageMapping = {};
 
@@ -109,6 +119,9 @@ class I18NextClassGenerator implements Builder {
     for (var ns in languageMapping.entries) {}
 
     // generate class file
+    // Only one locale defines the generated API. With the glob matches sorted
+    // that is now deterministically the alphabetically first locale directory,
+    // rather than whichever one the crawl happened to reach first.
     var jsonList = languageMapping.entries.first.value.entries;
     final library = LibraryBuilder();
     var topLevelClass = ClassBuilder();

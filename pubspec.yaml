@@ -1,6 +1,6 @@
 name: i18next_class_generator
 description: The dart class generator from i18next resource file
-version: 0.0.3
+version: 0.0.4
 homepage:
 
 environment:

@@ -1,3 +1,9 @@
+## 0.0.4
+* sort the glob matches by path so the generated file is reproducible -- class
+  order no longer depends on filesystem or asset-graph iteration order, and the
+  locale that drives generation is now the alphabetically first one (`en-US`)
+  instead of whichever directory the crawl reached first
+
 ## 0.0.3
 * fix dart environment
 
