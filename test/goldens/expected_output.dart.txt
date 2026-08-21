@@ -1,0 +1,123 @@
+import 'package:i18next/i18next.dart';
+
+class I18n {
+  I18n(this.i18next);
+
+  final I18Next i18next;
+
+  static I18n of(context) {
+    return I18n(I18Next.of(context)!);
+  }
+
+  _Alpha get alpha {
+    return _Alpha(i18next);
+  }
+
+  _Common get common {
+    return _Common(i18next);
+  }
+}
+
+class _Alpha {
+  _Alpha(this.i18next);
+
+  final I18Next i18next;
+
+  String get otherKey {
+    return i18next.t('alpha:otherKey');
+  }
+}
+
+class _CommonNestedDeep {
+  _CommonNestedDeep(this.i18next);
+
+  final I18Next i18next;
+
+  String get leaf {
+    return i18next.t('common:nested.deep.leaf');
+  }
+}
+
+class _CommonNested {
+  _CommonNested(this.i18next);
+
+  final I18Next i18next;
+
+  _CommonNestedDeep get deep {
+    return _CommonNestedDeep(i18next);
+  }
+
+  String get sibling {
+    return i18next.t('common:nested.sibling');
+  }
+}
+
+class _Common {
+  _Common(this.i18next);
+
+  final I18Next i18next;
+
+  String get plain {
+    return i18next.t('common:plain');
+  }
+
+  _CommonNested get nested {
+    return _CommonNested(i18next);
+  }
+
+  String single(name) {
+    return i18next.t(
+      'common:single',
+      variables: {"name": name},
+    );
+  }
+
+  String repeated(name) {
+    return i18next.t(
+      'common:repeated',
+      variables: {"name": name},
+    );
+  }
+
+  String twoParams(target, source) {
+    return i18next.t(
+      'common:twoParams',
+      variables: {"target": target, "source": source},
+    );
+  }
+
+  String plural(count) {
+    return i18next.t('common:plural', count: count);
+  }
+
+  String pluralWithName(name, count) {
+    return i18next.t('common:pluralWithName',
+        variables: {"name": name}, count: count);
+  }
+
+  String objectParam(user) {
+    return i18next.t(
+      'common:objectParam',
+      variables: {"user": user},
+    );
+  }
+
+  String formatParam(word) {
+    return i18next.t(
+      'common:formatParam',
+      variables: {"word": word},
+    );
+  }
+
+  String get zreturn {
+    return i18next.t('common:return');
+  }
+
+  String get zvoid {
+    return i18next.t('common:void');
+  }
+
+  String get needs_sanitising_key__x_ {
+    return i18next.t('common:needs-sanitising key/(x)');
+  }
+}

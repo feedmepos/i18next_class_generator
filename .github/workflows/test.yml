@@ -1,0 +1,23 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.4
+          cache: true
+      # --no-example: a plain `pub get` also resolves example/, whose
+      # `intl: ^0.17.0` conflicts with the flutter_localizations pinned by any
+      # current Flutter SDK. The example app is not exercised by these tests.
+      - run: flutter pub get --no-example
+      # `flutter test` re-runs pub get without --no-example and hits the same
+      # conflict, so drive package:test directly.
+      - run: dart test
