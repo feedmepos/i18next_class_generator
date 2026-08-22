@@ -35,7 +35,8 @@ Future<void> main(List<String> args) async {
 
   final assets = <String, String>{};
   for (final file in files) {
-    final relative = p.relative(file.path, from: root);
+    // Asset ids always use POSIX separators; on Windows p.relative returns `\`.
+    final relative = p.split(p.relative(file.path, from: root)).join('/');
     assets['pkg|lib/i18next/$relative'] = file.readAsStringSync();
   }
 

@@ -101,8 +101,14 @@ class I18NextClassGenerator implements Builder {
     // there into the order of the emitted classes, which made the generated
     // file unreproducible. Sorting also pins which locale drives generation
     // below, since that is `languageMapping.entries.first`.
+    // Comparing (package, path) rather than path alone keeps the order total:
+    // `List.sort` is not stable, so a path-only comparator could still leave
+    // same-path assets from different packages in an arbitrary order.
     final allJsonFiles = (await buildStep.findAssets(Glob(globPattern)).toList())
-      ..sort((a, b) => a.path.compareTo(b.path));
+      ..sort((a, b) {
+        final byPackage = a.package.compareTo(b.package);
+        return byPackage != 0 ? byPackage : a.path.compareTo(b.path);
+      });
 
     Map<String, Map<String, Map<String, dynamic>>> languageMapping = {};
 
